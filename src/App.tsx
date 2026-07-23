@@ -1,13 +1,73 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
 import "./App.css";
 
+import { create } from "zustand";
+
+type PageModeStore = {
+  pageMode: string;
+  setPage: (newPage: string) => void;
+};
+
+const usePageModeStore = create<PageModeStore>((set) => ({
+  pageMode: "insertion",
+  setPage: (newPage) => set({ pageMode: newPage }),
+}));
+
+type InputModeStore = {
+  inputMode: string;
+  setInput: (newInput: string) => void;
+};
+
+const useInputModeStore = create<InputModeStore>((set) => ({
+  inputMode: "insertion",
+  setInput: (newInput) => set({ inputMode: newInput }),
+}));
+
 function App() {
-  const [count, setCount] = useState(0);
+  const pageState = usePageModeStore((s) => s.pageMode);
+  const setPage = usePageModeStore((s) => s.setPage);
+  const inputState = useInputModeStore((s) => s.inputMode);
+  const setInput = useInputModeStore((s) => s.setInput);
+
+  if (pageState == "playlist") {
+  }
 
   return (
+    <>
+      {pageState === "insertion" && (
+        <>
+          <section id="center">
+            <div>Enter the setlist.fm url below:</div>
+            <input
+              id="input-field"
+              placeholder="https://www.setlist.fm/setlist/..."
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button id="insert-button" onClick={() => setPage("playlist")}>
+              Generate playlist
+            </button>
+          </section>
+        </>
+      )}
+      {pageState === "playlist" && (
+        <>
+          <section id="center">
+            <div>XD</div>
+            <div>{inputState}</div>
+            <iframe
+              data-testid="embed-iframe"
+              // style="border-radius:12px"
+              src="https://open.spotify.com/embed/track/0VPMvHXO7K1Ukj0DAmtvPs"
+              // width="50%"
+              // frameBorder="0"
+              // allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </section>
+        </>
+      )}
+    </>
+
+    /*
     <>
       <section id="center">
         <div className="hero">
@@ -115,7 +175,7 @@ function App() {
 
       <div className="ticks"></div>
       <section id="spacer"></section>
-    </>
+    </>*/
   );
 }
 
