@@ -1,3 +1,4 @@
+import { Songs } from "../services/fetch-songs";
 import { useInputModeStore } from "../stores/input.store";
 
 export function PlayListPage() {
@@ -12,6 +13,7 @@ export function PlayListPage() {
           src="https://open.spotify.com/embed/track/0VPMvHXO7K1Ukj0DAmtvPs"
           loading="lazy"
         ></iframe> */}
+        <Songs />
       </section>
     </>
   );
