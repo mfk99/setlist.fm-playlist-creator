@@ -10,14 +10,13 @@ export async function scrapePage(pageUrl: string) {
     }
 
     await page.goto(pageUrl, { waitUntil: "networkidle0" });
-    const data = await page.evaluate(
-      () => document.querySelector(".setlistList")?.outerHTML,
-    );
-
-    console.log(data);
+    const songs = await page.$$eval(".songLabel", (elements) => {
+      return elements.map((element) => element.textContent);
+    });
+    console.log("songs=", songs);
 
     await browser.close();
-    return data;
+    return songs;
   } catch (err) {
     console.error(err);
   }
