@@ -13,7 +13,6 @@ export async function scrapePage(pageUrl: string) {
     const songs = await page.$$eval(".songLabel", (elements) => {
       return elements.map((element) => element.textContent);
     });
-    console.log("songs=", songs);
 
     await browser.close();
     return songs;
