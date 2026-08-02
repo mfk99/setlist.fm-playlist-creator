@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import axios from "axios";
+import "dotenv/config";
 import { scrapePage } from "./data-retriever.js";
 
 const app = express();
@@ -29,6 +31,33 @@ app.get("/page", async (req, res) => {
   res.send(data);
 });
 
+app.get("/login", async (req, res) => {
+  const username = req.query.username as string;
+  const password = req.query.password as string;
+  const token = await requestLogin(username, password);
+  res.send(token);
+});
+
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
+
+async function requestLogin(
+  username: string,
+  password: string,
+): Promise<string> {
+  const client_id = process.env.SPOTIFY_CLIENT_ID;
+  const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+  const response = await axios({
+    method: "post",
+    url: "https://accounts.spotify.com/api/token",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    data: {
+      grant_type: "client_credentials",
+      client_id: client_id,
+      client_secret: client_secret,
+    },
+  });
+  console.log(response.data.access_token);
+  return response.data.access_token;
+}
