@@ -1,8 +1,21 @@
 import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+
+async function launchBrowser() {
+  if (process.env.NODE_ENV === "production") {
+    return puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  } else {
+    return puppeteer.launch({ headless: true });
+  }
+}
 
 export async function scrapePage(pageUrl: string) {
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await launchBrowser();
     const [page] = await browser.pages();
     if (!page) {
       console.warn("Page is null");
