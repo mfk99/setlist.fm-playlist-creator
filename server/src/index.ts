@@ -38,6 +38,41 @@ app.get("/login", async (req, res) => {
   res.send(token);
 });
 
+app.get("/artist/:artistId/token/:accessToken", async (req, res) => {
+  const { artistId, accessToken } = req.params;
+  const response = await axios({
+    method: "get",
+    url: `https://api.spotify.com/v1/artists/${artistId}`,
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  res.send(response.data);
+});
+
+https: app.get("/songs/artist/:artist/token/:accessToken", async (req, res) => {
+  const { artist, accessToken } = req.params;
+  const songIds = req.query.songId as any;
+  console.log("songIds:", songIds);
+
+  const dataArray: any[] = [];
+  for (const songId of songIds) {
+    console.log(songId);
+    const response = await axios({
+      method: "get",
+      url: `https://api.spotify.com/v1/search`,
+      params: {
+        q: `track:${songId} artist:${artist}`,
+        type: "track",
+        limit: 1,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    console.log(response.data);
+    dataArray.push(response.data.tracks.items[0].id);
+  }
+
+  res.send(dataArray);
+});
+
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
