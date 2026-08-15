@@ -1,16 +1,10 @@
-import axios from "axios";
 import { useState } from "react";
-import { useTokenStore } from "../stores/token.store";
-import { BASE_URL } from "../utils/env";
 
 export function SpotifyLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const setToken = useTokenStore((s) => s.setToken);
 
   async function handleSpotifyLogin() {
-    const response = await axios.get(`${BASE_URL}/spotify/token`);
-    setToken(response.data);
     console.log("token received");
   }
 

@@ -58,7 +58,7 @@ function SongList({ songNameList }: SongListProps) {
   const artist = extractArtistName();
   const { data, isLoading, error } = useQuery({
     queryKey: ["songids"],
-    queryFn: () => fetchSongIds(songNameList, artist, token),
+    queryFn: () => fetchSongIds(songNameList, artist, token as string),
     enabled: !!token && songNameList.length > 0,
   });
   if (!token || songNameList.length == 0) {
