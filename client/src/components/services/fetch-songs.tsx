@@ -3,11 +3,11 @@ import axios from "axios";
 import { useInputModeStore } from "../stores/input.store";
 import { useState } from "react";
 import { useTokenStore } from "../stores/token.store";
+import { BASE_URL } from "../utils/env";
 
 async function fetchSongs(setlistUrl: string): Promise<string[]> {
-  const response = await axios.get(
-    "http://localhost:3000/page?url=" + setlistUrl,
-  );
+  const query = `${BASE_URL}/page?url=${setlistUrl}`;
+  const response = await axios.get(query);
   return response.data;
 }
 
@@ -16,7 +16,7 @@ async function fetchSongIds(
   artist: string,
   token: string,
 ): Promise<string[]> {
-  let url = `http://localhost:3000/songs/artist/${artist}/token/${token}?`;
+  let url = `${BASE_URL}/songs/artist/${artist}/token/${token}?`;
   for (const songName of songs) {
     url += `songId=${songName}&`;
   }
@@ -32,7 +32,7 @@ function SpotifyLogin() {
 
   async function handleSpotifyLogin() {
     const response = await axios.get(
-      `http://localhost:3000/login?username=${username}?password=${password}`,
+      `${BASE_URL}/login?username=${username}?password=${password}`,
     );
     setToken(response.data);
   }
@@ -121,7 +121,6 @@ export function Songs() {
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading songs.</p>;
-  console.log(data);
   return (
     <>
       <ul>
