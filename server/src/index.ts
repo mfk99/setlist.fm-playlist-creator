@@ -9,7 +9,10 @@ import { BASE_URL, FRONTEND_URL } from "./utils/env.js";
 const app = express();
 const port = "3000";
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://setlist-fm-playlist-creator-front.vercel.app",
+];
 app.use(
   cors({
     origin: function (origin: any, callback: any) {
