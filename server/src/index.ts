@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import "dotenv/config";
+import querystring from "node:querystring";
 import { scrapePage } from "./data-retriever.js";
+import { BASE_URL, FRONTEND_URL } from "./utils/env.js";
 
 const app = express();
 const port = "3000";
@@ -96,3 +98,68 @@ async function requestLogin(
   console.log(response.data.access_token);
   return response.data.access_token;
 }
+
+const redirect_uri = `${BASE_URL}/spotify/callback`;
+
+function generateRandomString(length: number): string {
+  let result = "";
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+app.get("/spotify/login", (req, res) => {
+  const client_id = process.env.SPOTIFY_CLIENT_ID;
+
+  var state = generateRandomString(16);
+  var scope = "playlist-modify-public playlist-modify-private";
+
+  const params = querystring.stringify({
+    response_type: "code",
+    client_id,
+    scope,
+    redirect_uri: redirect_uri,
+    state,
+  });
+
+  res.redirect(`https://accounts.spotify.com/authorize?${params}`);
+});
+
+app.get("/spotify/callback", async (req, res) => {
+  const code = req.query.code || null;
+  const state = req.query.state || null;
+  const client_id = process.env.SPOTIFY_CLIENT_ID;
+  const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+
+  if (state === null) {
+    res.redirect(
+      "/#" +
+        querystring.stringify({
+          error: "state_mismatch",
+        }),
+    );
+  } else {
+    const params = new URLSearchParams({
+      code: code as string,
+      redirect_uri: redirect_uri,
+      grant_type: "authorization_code",
+    });
+
+    const response = await axios({
+      method: "post",
+      url: "https://accounts.spotify.com/api/token",
+      data: params,
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        Authorization:
+          "Basic " +
+          Buffer.from(client_id + ":" + client_secret).toString("base64"),
+      },
+    });
+  }
+  res.redirect(FRONTEND_URL);
+});
