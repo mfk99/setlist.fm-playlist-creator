@@ -134,8 +134,6 @@ app.get("/spotify/callback", async (req, res) => {
   const state = req.query.state || null;
   const client_id = process.env.SPOTIFY_CLIENT_ID;
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
-  console.log("code:", code);
-  console.log("state:", state);
 
   if (state === null) {
     res.redirect(
