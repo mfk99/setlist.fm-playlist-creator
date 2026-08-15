@@ -67,7 +67,8 @@ export async function callback(req: Request, res: Response) {
       res.cookie("session", sessionToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
+        path: "/",
       });
       console.log("Cookie set!");
 
