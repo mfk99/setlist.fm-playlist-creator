@@ -1,6 +1,4 @@
-import express, { response } from "express";
-
-import axios from "axios";
+import express from "express";
 import "dotenv/config";
 
 import cors from "./config/cors.js";
