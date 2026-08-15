@@ -149,8 +149,10 @@ export async function playlist(req: Request, res: Response) {
   });
 
   const playlistId = plauListCreationResponse.data.id;
+  console.log("playlistId:", playlistId);
 
   const songIds = req.query.songId as any;
+  console.log("songIds:", songIds);
   const songUris = [];
   for (const songId of songIds) {
     songUris.push(`spotify:track:${songId}`);

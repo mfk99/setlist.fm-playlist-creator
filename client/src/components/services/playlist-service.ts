@@ -10,4 +10,5 @@ export async function createPlayList(songIds: string[]) {
   const response = await axios.get(url, {
     withCredentials: true,
   });
+  console.log("response:", response);
 }
