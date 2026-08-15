@@ -138,9 +138,8 @@ export async function songs(req: Request, res: Response) {
       console.log(response);
       console.log("ERROR:", err);
     }
-
-    res.send(dataArray);
   }
+  res.send(dataArray);
 }
 
 export async function playlist(req: Request, res: Response) {
