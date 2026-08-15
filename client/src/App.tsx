@@ -3,6 +3,7 @@ import { usePageModeStore } from "./components/stores/page.store";
 import { InsertionPage } from "./components/pages/InsertionPage";
 import { PlayListPage } from "./components/pages/PlayListPage";
 import "./App.css";
+import { Header } from "./components/header/Header";
 
 function App() {
   const queryClient = new QueryClient();
@@ -10,6 +11,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Header />
       {pageState === "insertion" && <InsertionPage />}
       {pageState === "playlist" && <PlayListPage />}
     </QueryClientProvider>

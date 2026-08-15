@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useInputModeStore } from "../stores/input.store";
-import { useState } from "react";
 import { useTokenStore } from "../stores/token.store";
 import { BASE_URL } from "../utils/env";
 
 async function fetchSongs(setlistUrl: string): Promise<string[]> {
-  const query = `${BASE_URL}/page?url=${setlistUrl}`;
+  const query = `${BASE_URL}/setlist/page?url=${setlistUrl}`;
   const response = await axios.get(query);
   return response.data;
 }
@@ -16,47 +15,13 @@ async function fetchSongIds(
   artist: string,
   token: string,
 ): Promise<string[]> {
-  let url = `${BASE_URL}/songs/artist/${artist}/token/${token}?`;
+  let url = `${BASE_URL}/spotify/songs/artist/${artist}/token/${token}?`;
   for (const songName of songs) {
     url += `songId=${songName}&`;
   }
   url = url.substring(0, url.length - 1);
   const response = await axios.get(url);
   return response.data;
-}
-
-function SpotifyLogin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const setToken = useTokenStore((s) => s.setToken);
-
-  async function handleSpotifyLogin() {
-    const response = await axios.get(
-      `${BASE_URL}/login?username=${username}?password=${password}`,
-    );
-    setToken(response.data);
-  }
-
-  return (
-    <>
-      <div>To download the list, log in to Spotify below.</div>
-      <input
-        type="text"
-        placeholder="Enter Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Enter Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit" onClick={handleSpotifyLogin}>
-        Login
-      </button>
-    </>
-  );
 }
 
 type SongCardProps = {
@@ -128,7 +93,6 @@ export function Songs() {
           <li key={song}>{song}</li>
         ))}
       </ul>
-      <SpotifyLogin />
       <SongList songNameList={data ?? []} />
     </>
   );
