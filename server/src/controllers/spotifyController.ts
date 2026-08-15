@@ -139,7 +139,7 @@ export async function songs(req: Request, res: Response) {
 export async function playlist(req: Request, res: Response) {
   const sessionToken = req.cookies.session;
 
-  const plauListCreationResponse = await axios({
+  const playListCreationResponse = await axios({
     method: "post",
     url: `https://api.spotify.com/v1/me/playlists`,
     data: {
@@ -148,7 +148,7 @@ export async function playlist(req: Request, res: Response) {
     headers: { Authorization: `Bearer ${sessionToken}` },
   });
 
-  const playlistId = plauListCreationResponse.data.id;
+  const playlistId = playListCreationResponse.data.id;
   console.log("playlistId:", playlistId);
 
   const songIds = req.query.songId as any;
@@ -157,7 +157,7 @@ export async function playlist(req: Request, res: Response) {
   for (const songId of songIds) {
     songUris.push(`spotify:track:${songId}`);
   }
-
+  console.log("songUris:", songUris);
   const response = await axios.post(
     `https://api.spotify.com/v1/playlists/${playlistId}/items`,
     { songUris },
