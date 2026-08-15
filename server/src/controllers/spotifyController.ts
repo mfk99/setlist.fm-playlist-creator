@@ -63,6 +63,14 @@ export async function callback(req: Request, res: Response) {
             Buffer.from(client_id + ":" + client_secret).toString("base64"),
         },
       });
+      const sessionToken = response.data.access_token;
+      res.cookie("session", sessionToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+      });
+
+      res.redirect(FRONTEND_URL);
     } catch (error) {
       console.log("error:", error);
     }
