@@ -1,5 +1,6 @@
 export const BASE_URL = determineBaseUrl();
 export const FRONTEND_URL = determineFrontEndUrl();
+export const REDIRECT_URI = `${BASE_URL}/spotify/callback`;
 
 function determineBaseUrl() {
   const local = process.env.LOCAL;
