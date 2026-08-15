@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import cors from "cors";
 import axios from "axios";
 import "dotenv/config";
@@ -134,6 +134,8 @@ app.get("/spotify/callback", async (req, res) => {
   const state = req.query.state || null;
   const client_id = process.env.SPOTIFY_CLIENT_ID;
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+  console.log("code:", code);
+  console.log("state:", state);
 
   if (state === null) {
     res.redirect(
@@ -149,17 +151,22 @@ app.get("/spotify/callback", async (req, res) => {
       grant_type: "authorization_code",
     });
 
-    const response = await axios({
-      method: "post",
-      url: "https://accounts.spotify.com/api/token",
-      data: params,
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-        Authorization:
-          "Basic " +
-          Buffer.from(client_id + ":" + client_secret).toString("base64"),
-      },
-    });
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://accounts.spotify.com/api/token",
+        data: params,
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            Buffer.from(client_id + ":" + client_secret).toString("base64"),
+        },
+      });
+    } catch (error) {
+      console.log("error:", error);
+      console.log("response:", response);
+    }
   }
   res.redirect(FRONTEND_URL);
 });
