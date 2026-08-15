@@ -38,7 +38,7 @@ export async function callback(req: Request, res: Response) {
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 
   if (state === null) {
-    res.redirect(
+    return res.redirect(
       "/#" +
         querystring.stringify({
           error: "state_mismatch",
@@ -71,12 +71,12 @@ export async function callback(req: Request, res: Response) {
       });
       console.log("Cookie set!");
 
-      res.redirect(FRONTEND_URL);
+      return res.redirect(FRONTEND_URL);
     } catch (error) {
       console.log("error:", error);
+      return res.redirect(FRONTEND_URL);
     }
   }
-  res.redirect(FRONTEND_URL);
 }
 
 export async function token(req: Request, res: Response) {
