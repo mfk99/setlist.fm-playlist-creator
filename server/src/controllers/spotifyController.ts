@@ -69,6 +69,7 @@ export async function callback(req: Request, res: Response) {
         secure: true,
         sameSite: "lax",
       });
+      console.log("Cookie set!");
 
       res.redirect(FRONTEND_URL);
     } catch (error) {
