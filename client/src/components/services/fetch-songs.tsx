@@ -3,6 +3,8 @@ import axios from "axios";
 import { useInputModeStore } from "../stores/input.store";
 import { useTokenStore } from "../stores/token.store";
 import { BASE_URL } from "../utils/env";
+import { useSongIdStore } from "../stores/songId.store";
+import { createPlayList } from "./playlist-service";
 
 async function fetchSongs(setlistUrl: string): Promise<string[]> {
   const query = `${BASE_URL}/setlist/page?url=${setlistUrl}`;
@@ -21,6 +23,8 @@ async function fetchSongIds(
   }
   url = url.substring(0, url.length - 1);
   const response = await axios.get(url);
+  const appendToSongIds = useSongIdStore.getState().appendToSongIds;
+  for (const id in response.data) appendToSongIds(id);
   return response.data;
 }
 
@@ -95,5 +99,13 @@ export function Songs() {
       </ul>
       <SongList songNameList={data ?? []} />
     </>
+  );
+}
+
+export function DownLoadButton() {
+  const songIds = useSongIdStore((s) => s.songIds);
+  if (songIds.length == 0) return <></>;
+  return (
+    <button onClick={() => createPlayList(songIds)}>Add to Spotify</button>
   );
 }

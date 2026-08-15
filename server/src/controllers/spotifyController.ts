@@ -135,3 +135,36 @@ export async function songs(req: Request, res: Response) {
 
   res.send(dataArray);
 }
+
+export async function playlist(req: Request, res: Response) {
+  const sessionToken = req.cookies.session;
+
+  const plauListCreationResponse = await axios({
+    method: "post",
+    url: `https://api.spotify.com/v1/me/playlists`,
+    data: {
+      name: "New playlist",
+    },
+    headers: { Authorization: `Bearer ${sessionToken}` },
+  });
+
+  const playlistId = plauListCreationResponse.data.id;
+
+  const songIds = req.query.songId as any;
+  const songUris = [];
+  for (const songId of songIds) {
+    songUris.push(`spotify:track:${songId}`);
+  }
+
+  const response = await axios.post(
+    `https://api.spotify.com/v1/playlists/${playlistId}/items`,
+    { songUris },
+    {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  res.send(playlistId);
+}
