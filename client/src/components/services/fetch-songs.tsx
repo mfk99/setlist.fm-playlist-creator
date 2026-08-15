@@ -24,7 +24,7 @@ async function fetchSongIds(
   url = url.substring(0, url.length - 1);
   const response = await axios.get(url);
   const appendToSongIds = useSongIdStore.getState().appendToSongIds;
-  for (const id in response.data) appendToSongIds(id);
+  for (const id of response.data) appendToSongIds(id);
   return response.data;
 }
 
