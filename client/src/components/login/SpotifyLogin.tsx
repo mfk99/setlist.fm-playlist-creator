@@ -9,9 +9,7 @@ export function SpotifyLogin() {
   const setToken = useTokenStore((s) => s.setToken);
 
   async function handleSpotifyLogin() {
-    const response = await axios.get(
-      `${BASE_URL}/spotify/login?username=${username}?password=${password}`,
-    );
+    const response = await axios.get(`${BASE_URL}/spotify/token`);
     setToken(response.data);
     console.log("token received");
   }
