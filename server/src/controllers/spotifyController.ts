@@ -119,9 +119,8 @@ export async function songs(req: Request, res: Response) {
   const dataArray: any[] = [];
   for (const songId of songIds) {
     console.log(songId);
-    let response;
     try {
-      response = await axios({
+      const response = await axios({
         method: "get",
         url: `https://api.spotify.com/v1/search`,
         params: {
@@ -135,7 +134,6 @@ export async function songs(req: Request, res: Response) {
       console.log(response.data);
       dataArray.push(response.data.tracks.items[0].id);
     } catch (err) {
-      console.log(response);
       console.log("ERROR:", err);
     }
   }
