@@ -162,15 +162,25 @@ export async function playlist(req: Request, res: Response) {
     songUris.push(`spotify:track:${songId}`);
   }
   console.log("songUris:", songUris);
-  const response = await axios.post(
-    `https://api.spotify.com/v1/playlists/${playlistId}/items`,
-    { songUris },
-    {
-      headers: {
-        Authorization: `Bearer ${sessionToken}`,
-        "Content-Type": "application/json",
+  try {
+    const response = await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/items`,
+      { uris: songUris },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+          "Content-Type": "application/json",
+        },
       },
-    },
-  );
-  res.send(playlistId);
+    );
+
+    res.send(playlistId);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Spotify status:", error.response?.status);
+      console.log("Spotify response:", error.response?.data);
+    }
+
+    res.status(500).send("Failed to add songs");
+  }
 }
