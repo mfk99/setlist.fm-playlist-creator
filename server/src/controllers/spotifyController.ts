@@ -2,6 +2,7 @@ import { FRONTEND_URL, REDIRECT_URI } from "../config/env.js";
 import querystring from "node:querystring";
 import type { Request, Response } from "express";
 import axios from "axios";
+import { insertIntoDB, queryDB } from "./dbController.js";
 
 function generateRandomString(length: number): string {
   let result = "";
@@ -113,18 +114,26 @@ export async function artist(req: Request, res: Response) {
 
 export async function songs(req: Request, res: Response) {
   const { artist, accessToken } = req.params;
-  const songIds = req.query.songId as any;
-  console.log("songIds:", songIds);
+  const songNames = req.query.songId as any;
+  console.log("songIds:", songNames);
 
   const dataArray: any[] = [];
-  for (const songId of songIds) {
-    console.log(songId);
+  for (const songName of songNames) {
+    //Check db for id
+    const songSpotifyId = await queryDB(songName, artist as string);
+    if (songSpotifyId) {
+      dataArray.push(songSpotifyId);
+      continue;
+    }
+
+    //Id not in db, query spotify API
+    console.log("songName:", songName);
     try {
       const response = await axios({
         method: "get",
         url: `https://api.spotify.com/v1/search`,
         params: {
-          q: `track:${songId} artist:${artist}`,
+          q: `track:${songName} artist:${artist}`,
           type: "track",
           limit: 1,
         },
@@ -132,7 +141,9 @@ export async function songs(req: Request, res: Response) {
       });
       console.log(response);
       console.log(response.data);
-      dataArray.push(response.data.tracks.items[0].id);
+      const songSpotifyId = response.data.tracks.items[0].id;
+      dataArray.push(songSpotifyId);
+      await insertIntoDB(songName, artist as string, songSpotifyId);
     } catch (err) {
       console.log("ERROR:", err);
     }
